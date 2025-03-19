@@ -1,0 +1,7 @@
+uvicorn
+fastapi
+trism
+tritonclient[all]
+attrdict
+transformers
+numpy>=2.0.0

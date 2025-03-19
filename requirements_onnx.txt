@@ -1,0 +1,5 @@
+adapters
+onnx
+torch
+onnxruntime[all]
+wtpsplit

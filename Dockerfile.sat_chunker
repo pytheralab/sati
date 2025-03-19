@@ -1,0 +1,16 @@
+FROM hieupth/tritonserver:24.12
+# FROM nvcr.io/nvidia/tritonserver:24.12-py3
+
+
+ENV MODEL_TYPE=model_w_mask.onnx
+ENV BACKEND=onnxruntime
+
+COPY models/sat_chunker /models/sat_chunker
+COPY choose_mode.py choose_mode.py
+
+EXPOSE 8000 8001 8002
+
+
+# RUN apt-get update && apt-get install -y libmpich-dev libopenmpi-dev  
+
+CMD ["bash", "-c", "python3 -u choose_mode.py && tritonserver --model-repository=/models"]

@@ -1,0 +1,42 @@
+services:
+  triton:
+    image: presencesw/sat_chunker:24.12
+    container_name: sat_chunker
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    environment:
+      CHUNKER_NAME: "sat_chunker"
+      
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ["0"]
+    command: >
+      bash -c "python3 -u choose_mode.py && tritonserver --model-repository=/models"
+  
+  trunker_client:
+    image: presencesw/sat_client
+    container_name: sat_client
+    ports:
+      - "7999:7999"
+    environment:
+      CHUNKER_NAME: "sat_chunker"
+      TRITON_URL: "triton:8000"
+      MODEL_VERSION: 1
+      MODEL_NAME: "sat_chunker"
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ["0"]
+    command: >
+      bash -c "uvicorn api.main_v1:app --host 0.0.0.0 --port 7999"

@@ -1,0 +1,13 @@
+FROM python:3.10-slim
+
+EXPOSE 7000 8000
+
+COPY choose_mode.py choose_mode.py
+COPY requirements.txt requirements.txt
+COPY api/ api/
+COPY scripts/test_api_sat.sh scripts/test_api_sat.sh
+
+RUN pip install -r requirements.txt
+RUN /bin/sh -c python api/re_download_model.py
+
+CMD ["/bin/bash", "scripts/test_api_sat.sh"]
